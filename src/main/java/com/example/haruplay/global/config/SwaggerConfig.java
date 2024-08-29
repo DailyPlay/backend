@@ -16,12 +16,9 @@ public class SwaggerConfig {
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
         Components components = new Components().addSecuritySchemes(jwt, new SecurityScheme()
-                // 보안 스키마 이름 정의
                 .name(jwt)
-                // HTTP Bearer Token 방식 사용
                 .type(SecurityScheme.Type.HTTP)
                 .scheme("bearer")
-                // token 형식 : JWT
                 .bearerFormat("JWT")
         );
         return new OpenAPI()
@@ -32,8 +29,8 @@ public class SwaggerConfig {
     }
     private Info apiInfo() {
         return new Info()
-                .title("HaruPlay API") // API의 제목
-                .description("HaruPlay API Swagger UI") // API에 대한 설명
-                .version("1.0.0"); // API의 버전
+                .title("HaruPlay API")
+                .description("HaruPlay API Swagger UI")
+                .version("1.0.0");
     }
 }
