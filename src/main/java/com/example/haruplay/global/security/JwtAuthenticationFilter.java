@@ -51,9 +51,40 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         } else {
             log.warn("Invalid JWT token: {}", token);
+
+            String refreshToken = getRefreshTokenFromRequest(request);
+            if (refreshToken != null && tokenProvider.validateRefreshToken(refreshToken)) {
+                log.info("Valid refresh token found: {}", refreshToken);
+
+                String userEmail = tokenProvider.getUserEmail(refreshToken);
+                String newAccessToken = tokenProvider.createAccessToken(userEmail);
+
+                response.setHeader("Authorization", "Bearer " + newAccessToken);
+
+                setAuthentication(newAccessToken, request);
+            } else {
+                log.warn("Invalid JWT token or Refresh token: {}", token);
+            }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private void setAuthentication(String token, HttpServletRequest request) {
+        String userEmail = tokenProvider.getUserEmail(token);
+        log.info("Token validated successfully for user ID: {}", userEmail);
+
+        UserEntity userEntity = userService.getUserById(Long.valueOf(userEmail));
+
+        UserDetails userDetails = new UserDetailsImpl(userEntity);
+
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                userDetails, null, userDetails.getAuthorities());
+
+        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        log.info("Authentication set for user : {}", userEntity);
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {
@@ -62,5 +93,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return bearerToken.substring(7);
         }
         return null;
+    }
+
+    private String getRefreshTokenFromRequest(HttpServletRequest request) {
+        return request.getHeader("Refresh-Token");
     }
 }

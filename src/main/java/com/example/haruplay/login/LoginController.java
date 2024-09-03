@@ -41,14 +41,21 @@ public class LoginController {
                 )
         );
 
-        // 인증 후 SecurityContext에 인증 정보를 저장
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String jwt = tokenProvider.createToken(String.valueOf(loginRequest.getUserEmail()));
+        String userEmail = loginRequest.getUserEmail();
+
+        String accessToken = tokenProvider.createAccessToken(userEmail);
+        String refreshToken = tokenProvider.createRefreshToken(userEmail);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + jwt);
+        headers.set("Authorization", "Bearer " + accessToken);
+        headers.set("Refresh-Token", refreshToken);
 
-        return ResponseEntity.ok().headers(headers).body("Login successful");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body("Login successful");
+//                .build();
+
     }
 }

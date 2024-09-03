@@ -17,30 +17,40 @@ public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secretKey;
 
-    @Value("${jwt.expiration}")
-    private long validityInMilliseconds;
+    @Value("${jwt.expiration.access-token}")
+    private long accessTokenValidityInMilliseconds;
+
+    @Value("${jwt.expiration.refresh-token}")
+    private long refreshTokenValidityInMilliseconds;
 
     private SecretKey getSigningKey() {
         byte[] keyBytes = secretKey.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public String createToken(String userEmail) {
-
+    public String createAccessToken(String userEmail) {
         Date now = new Date();
-        Date validity = new Date(now.getTime() + validityInMilliseconds);
+        Date validity = new Date(now.getTime() + accessTokenValidityInMilliseconds);
 
         return Jwts.builder()
-                .header()
-                .type("JWT")
-                .and()
                 .claim("userEmail", userEmail)
-                .issuedAt(now)
-                .expiration(validity)
+                .setIssuedAt(now)
+                .setExpiration(validity)
                 .signWith(getSigningKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
+    public String createRefreshToken(String userEmail) {
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshTokenValidityInMilliseconds);
+
+        return Jwts.builder()
+                .claim("userEmail", userEmail)
+                .setIssuedAt(now)
+                .setExpiration(validity)
+                .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
     public String getUserEmail(String token) {
         try {
             Claims claims = Jwts.parser()
@@ -70,6 +80,16 @@ public class JwtTokenProvider {
         } catch (Exception e) {
             log.warn("JWT 토큰 검증에 실패했습니다: {}", e.getMessage());
         } return false;
+    }
+
+    public boolean validateRefreshToken(String token) {
+        try {
+            Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJws(token);
+            return true;
+        } catch (Exception e) {
+            log.warn("JWT Refresh token validation failed: {}", e.getMessage());
+            return false;
+        }
     }
 
 }
