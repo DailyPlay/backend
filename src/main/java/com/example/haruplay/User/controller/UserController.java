@@ -1,7 +1,8 @@
-package com.example.haruplay.domain;
+package com.example.haruplay.User.controller;
 
-import com.example.haruplay.projection.UserInfoProjection;
-import com.example.haruplay.service.UserService;
+import com.example.haruplay.User.entity.User;
+import com.example.haruplay.User.dto.UserInfoProjection;
+import com.example.haruplay.User.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

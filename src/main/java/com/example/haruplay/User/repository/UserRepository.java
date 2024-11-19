@@ -1,7 +1,7 @@
-package com.example.haruplay.repository;
+package com.example.haruplay.User.repository;
 
-import com.example.haruplay.domain.User;
-import com.example.haruplay.projection.UserInfoProjection;
+import com.example.haruplay.User.entity.User;
+import com.example.haruplay.User.dto.UserInfoProjection;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
