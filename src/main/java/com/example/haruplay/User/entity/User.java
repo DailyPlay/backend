@@ -1,4 +1,4 @@
-package com.example.haruplay.domain;
+package com.example.haruplay.User.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;

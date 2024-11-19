@@ -1,8 +1,8 @@
-package com.example.haruplay.service;
+package com.example.haruplay.User.service;
 
-import com.example.haruplay.domain.User;
-import com.example.haruplay.projection.UserInfoProjection;
-import com.example.haruplay.repository.UserRepository;
+import com.example.haruplay.User.entity.User;
+import com.example.haruplay.User.dto.UserInfoProjection;
+import com.example.haruplay.User.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package com.example.haruplay.projection;
+package com.example.haruplay.User.dto;
 
 import java.time.LocalDateTime;
 
